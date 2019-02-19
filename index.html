@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Socket.IO chat</title>
+    <!-- move into new file -->
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -21,6 +22,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <!-- move into new file -->
     <script>
       $(function () {
         var socket = io();
@@ -30,6 +32,7 @@
           $('#m').val('');
           return false;
         });
+
         socket.on('chat message', function(msg){
           $('#messages').append($('<li>').text(msg));
         });
