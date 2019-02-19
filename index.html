@@ -33,6 +33,11 @@
         socket.on('chat message', function(msg){
           $('#messages').append($('<li>').text(msg));
         });
+        // Broadcast a message to connected users when someone connects or disconnects.
+        socket.on('connected', function(msg) {
+          console.log('message: ', msg);
+          $('#messages').append($('<li>').text(msg.username + ' has joined'));
+        });
       });
     </script>
   </body>

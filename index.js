@@ -3,7 +3,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 
-// Broadcast a message to connected users when someone connects or disconnects.
 // Add support for nicknames.
 // Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
 // Add “{user} is typing” functionality.
@@ -16,9 +15,14 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket) {
   console.log('a user connected');
+  // Broadcast a message to connected users when someone connects or disconnects.
+  socket.emit('connected', {username: 'Mason'});
+
   socket.on('chat message', function(msg) {
     io.emit('chat message', msg);
   });
+
+
 });
 
 
