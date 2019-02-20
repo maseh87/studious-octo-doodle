@@ -111,7 +111,48 @@
           // let name = userObj + ' has joined';
 
           // $('#messages').append($('<li>').text(data.userName));
-        })
+        });
+
+        // listeners
+        socket.on('error', function(err) {
+          console.log('recieved socket error: ', err);
+        });
+
+        //register handler
+        let register = function(name, cb) {
+          socket.emit('register', name, cb);
+        };
+
+        //join handler
+        let join = function(chatroomName, cb) {
+          socket.emit('join', chatroomName, cb);
+        };
+
+        //leave handler
+        let leave = function(chatroomName, cb) {
+          socket.emit('leave', chatroomName, cb);
+        };
+
+        //message handler
+        let message = function(chatroomName, msg, cb) {
+          socket.emit(
+            'message',
+            {
+              chatroom: chatroomName,
+              message: msg
+            },
+            cb);
+        };
+
+        // available chatrooms handlers
+        let getChatrooms = function(cb) {
+          socket.emit('chatrooms', null, cb);
+        };
+
+        // current online users handler
+        let getUsersOnline = function(cb) {
+          socket.emit('onlineUsers', null, cb);
+        };
       });
     </script>
   </body>
