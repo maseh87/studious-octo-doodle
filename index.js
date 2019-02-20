@@ -16,10 +16,11 @@ app.get('/', function(req, res){
 io.on('connection', function(socket) {
 
   // Broadcast a message to connected users when someone connects or disconnects.
-  socket.emit('connected', {username: 'Mason'});
+  socket.emit('connected');
 
-  socket.on('chat message', function(msg) {
-    io.emit('chat message', msg);
+  socket.on('chat message', function(msgObj) {
+    console.log(msgObj);
+    io.emit('chat message', msgObj);
   });
 
 

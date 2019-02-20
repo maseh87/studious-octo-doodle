@@ -19,8 +19,11 @@
   <body>
     <ul id="messages"></ul>
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <input id="m" autocomplete="off" />
+        <button>Send</button>
     </form>
+
+
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -28,21 +31,33 @@
     <!-- move into new file -->
     <script>
       $(function () {
+
+        let userName = window.prompt('Enter your username');
+
+        let userObj = {
+          userName: userName,
+          message: ''
+        }
+
         var socket = io();
         $('form').submit(function(e){
           e.preventDefault(); // prevents page reloading
-          socket.emit('chat message', $('#m').val());
+
+          userObj.message = $('#m').val();
+
+          socket.emit('chat message', userObj);
           $('#m').val('');
           return false;
         });
 
         socket.on('chat message', function(msg){
-          $('#messages').append($('<li>').text(msg));
+          console.log('The message: ', msg);
+          $('#messages').append($('<li>').text(msg.message));
         });
         // Broadcast a message to connected users when someone connects or disconnects.
         socket.on('connected', function(msg) {
           console.log('message: ', msg);
-          $('#messages').append($('<li>').text(msg.username + ' has joined'));
+          $('#messages').append($('<li>').text(msg.userName + ' has joined'));
         });
       });
     </script>
