@@ -42,7 +42,8 @@
         // establish the user object
         let userObj = {
           userName: 'Guest',
-          message: ''
+          message: '',
+          usersOnline: []
         }
 
         // Any form submission from the chat input
@@ -65,9 +66,17 @@
         // Broadcast a message to connected users when someone connects or disconnects.
         socket.on('connected', function(data) {
           let userName = window.prompt('Enter your username');
+
+          // declare the username in the user object
           userObj.userName = userName;
 
+          // add user to array of online users
+          userObj.usersOnline.push(userName);
+
+          // send the user object to be
           socket.emit('username', userObj);
+
+          // append the username to the list to show that the user has joined
           $('#messages').append($('<li>').text(userObj.userName + ' has joined'));
         });
 
@@ -78,13 +87,12 @@
 
 
         // Add “{user} is typing” functionality.
-
         $('#m').on('keydown', function(e) {
           // let typing = document.getElementsByClassName('typing')[0];
           let typing = $('.typing');
           typing.text(userObj.userName + ' is typing...');
           typing.show();
-          
+
           // remove it from the dom after typing stops
           _.delay(removeFromDom,3000, typing);
         });
@@ -92,7 +100,8 @@
 
 
         // Listen for new users
-        // socket.on('username', function(data) {
+        socket.on('username', function(data) {
+          console.log(data);
         //   if(data.userName !== userObj.userName) {
         //     $('#messages').append($('<li>').text(data.userName + ' has joined'));
         //   } else {
@@ -102,7 +111,7 @@
           // let name = userObj + ' has joined';
 
           // $('#messages').append($('<li>').text(data.userName));
-        // })
+        })
       });
     </script>
   </body>
