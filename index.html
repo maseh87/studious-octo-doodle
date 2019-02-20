@@ -14,6 +14,10 @@
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
+      .typing {
+        display: none;
+        height: 50px;
+      }
     </style>
   </head>
   <body>
@@ -23,25 +27,30 @@
         <button>Send</button>
     </form>
 
+    <div class="typing"></div>
+
 
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
     <!-- <script src="/client/js/app.js"></script> -->
     <!-- move into new file -->
     <script>
       $(function () {
         const socket = io();
+        // establish the user object
         let userObj = {
-          userName: 'guest',
+          userName: 'Guest',
           message: ''
         }
 
+        // Any form submission from the chat input
         $('form').submit(function(e){
           e.preventDefault(); // prevents page reloading
-
+          // attach message to the userObj
           userObj.message = $('#m').val();
-
+          // emit chat message
           socket.emit('chat message', userObj);
           $('#m').val('');
           return false;
@@ -52,6 +61,7 @@
           console.log('The message: ', msg);
           $('#messages').append($('<li>').text(msg.message));
         });
+
         // Broadcast a message to connected users when someone connects or disconnects.
         socket.on('connected', function(data) {
           let userName = window.prompt('Enter your username');
@@ -61,14 +71,38 @@
           $('#messages').append($('<li>').text(userObj.userName + ' has joined'));
         });
 
+        let removeFromDom = function(element) {
+          // element.style.display = 'none';
+          element.hide();
+        }
+
+
+        // Add “{user} is typing” functionality.
+
+        $('#m').on('keydown', function(e) {
+          // let typing = document.getElementsByClassName('typing')[0];
+          let typing = $('.typing');
+          typing.text(userObj.userName + ' is typing...');
+          typing.show();
+          
+          // remove it from the dom after typing stops
+          _.delay(removeFromDom,3000, typing);
+        });
+
+
+
         // Listen for new users
-        socket.on('username', function(data) {
+        // socket.on('username', function(data) {
+        //   if(data.userName !== userObj.userName) {
+        //     $('#messages').append($('<li>').text(data.userName + ' has joined'));
+        //   } else {
+        //     console.log('Else: ', data)
+        //   }
           // userObj.userName = data.userName;
           // let name = userObj + ' has joined';
-          console.log('recieved username message: ', data)
 
-          $('#messages').append($('<li>').text(data.userName));
-        })
+          // $('#messages').append($('<li>').text(data.userName));
+        // })
       });
     </script>
   </body>
