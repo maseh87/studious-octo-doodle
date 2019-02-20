@@ -8,7 +8,7 @@ var io = require('socket.io')(http);
 // Add “{user} is typing” functionality.
 // Show who’s online.
 // Add private messaging.
-let userObj = {}
+let userObj = {};
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -17,13 +17,13 @@ app.get('/', function(req, res){
 io.on('connection', function(socket) {
 
   // Broadcast a message to connected users when someone connects or disconnects.
-  socket.emit('connected');
+  socket.emit('connected', userObj);
 
 
-  socket.on('username', function(name) {
-    console.log('got username', name)
-    userObj.userName = name;
-    io.emit('username', userObj);
+  socket.on('username', function(data) {
+    console.log('got username from frontend: ', data)
+    userObj.userName = data.userName;
+    socket.emit('username', userObj);
   });
 
   socket.on('chat message', function(msgObj) {

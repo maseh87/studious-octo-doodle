@@ -42,24 +42,33 @@
 
           userObj.message = $('#m').val();
 
-
           socket.emit('chat message', userObj);
           $('#m').val('');
           return false;
         });
 
+        // when we recieve a message
         socket.on('chat message', function(msg){
           console.log('The message: ', msg);
           $('#messages').append($('<li>').text(msg.message));
         });
         // Broadcast a message to connected users when someone connects or disconnects.
-        socket.on('connected', function(msg) {
+        socket.on('connected', function(data) {
           let userName = window.prompt('Enter your username');
           userObj.userName = userName;
 
           socket.emit('username', userObj);
           $('#messages').append($('<li>').text(userObj.userName + ' has joined'));
         });
+
+        // Listen for new users
+        socket.on('username', function(data) {
+          // userObj.userName = data.userName;
+          // let name = userObj + ' has joined';
+          console.log('recieved username message: ', data)
+
+          $('#messages').append($('<li>').text(data.userName));
+        })
       });
     </script>
   </body>
