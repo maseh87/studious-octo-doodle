@@ -15,7 +15,40 @@ let userObj = {
   usersOnline: []
 };
 
-// handler functions
+const members = new Map()
+let chatHistory = [];
+
+
+function broadcastMessages(msg) {
+  members.forEach(function(member) {
+    // emit a message for each 
+  });
+}
+
+function addMessage(msg) {
+  chatHistory = chatHistory.concat(msg);
+}
+
+function getChatHistory() {
+  return chatHistory.slice();
+}
+
+function addUser(user) {
+  members.set(user.id, user);
+}
+
+function removeUser(user) {
+  members.delete(user.id);
+}
+
+function serialize() {
+  return {
+    name,
+    numMembers: members.size
+  }
+}
+
+////////// handler functions //////////
 let joinHandler = function() {
 
 };
