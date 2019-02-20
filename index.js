@@ -14,7 +14,7 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket) {
-  console.log('a user connected');
+
   // Broadcast a message to connected users when someone connects or disconnects.
   socket.emit('connected', {username: 'Mason'});
 
