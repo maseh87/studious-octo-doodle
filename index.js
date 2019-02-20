@@ -21,7 +21,7 @@ let chatHistory = [];
 
 function broadcastMessages(msg) {
   members.forEach(function(member) {
-    // emit a message for each 
+    // emit a message for each
   });
 }
 
@@ -49,7 +49,7 @@ function serialize() {
 }
 
 ////////// handler functions //////////
-let joinHandler = function() {
+let joinHandler = function(chatroomName, cb) {
 
 };
 
