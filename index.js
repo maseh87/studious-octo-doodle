@@ -11,7 +11,7 @@ var _ = require('lodash');
 
 let userObj = {
   userName: 'guest',
-  message: '',
+  messages: '',
   usersOnline: []
 };
 
@@ -43,12 +43,21 @@ io.on('connection', function(socket) {
     io.emit('chat message', msgObj);
   });
 
+  // socket.on('', function() {
+  //
+  // });
+
   // Add “{user} is typing” functionality.
 
 
   // Broadcast a message to connected users when someone connects or disconnects.
   socket.emit('connected', userObj);
 
+  // Error handling
+  socket.on('error', function(err) {
+    console.log('recieved error from user: ', socket.id);
+    console.log(err);
+  });
 });
 
 http.listen(3000, function() {
