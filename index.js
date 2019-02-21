@@ -60,25 +60,30 @@ io.on('connection', function(socket) {
 	socket.on('switchRoom', function(newroom){
     // leave the current room
 		socket.leave(socket.room);
+
     // join the new room
 		socket.join(newroom);
+
     // let the server know to update the chats
 		socket.emit('updatechat', 'SERVER', 'you have connected to '+ newroom);
+
 		// sent message to OLD room
 		socket.broadcast.to(socket.room).emit('updatechat', 'SERVER', socket.username+' has left this room');
+
 		// update socket session room title
 		socket.room = newroom;
 		socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username+' has joined this room');
 		socket.emit('updaterooms', rooms, newroom);
 	});
 
-
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
 		// remove the username from global userObj list
 		delete userObj[socket.username];
+
 		// update list of users in chat, client-side
 		io.sockets.emit('updateusers', userObj);
+
 		// echo globally that this client has left
 		socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
 		socket.leave(socket.room);

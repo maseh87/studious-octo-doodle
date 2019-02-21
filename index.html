@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Socket.IO chat</title>
 
+    <!-- TODO: Upate style and html into its own file -->
     <div style="float:left;width:100px;border-right:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
 	     <b>ROOMS</b>
 	     <div id="rooms"></div>
@@ -22,10 +23,6 @@
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
-    <!-- Load our React component. -->
-    <!-- <script src="/like_button.js"></script> -->
-    <!-- <script src="/client/js/app.js"></script> -->
-
 
     <!-- move into new file -->
     <script>
@@ -36,12 +33,17 @@
 
       });
 
+      // Update chats for the client
       socket.on('updatechat', function(username, data) {
+        // append the new chats to the conversation
         $('#conversation').append('<b>'+ username + ':</b> ' + data + '<br>');
       });
 
+      // Update new rooms
       socket.on('updaterooms', function(rooms, current_room) {
-    		$('#rooms').empty();
+        // empty the current room
+        $('#rooms').empty();
+        // append each chat
     		$.each(rooms, function(key, value) {
     			if(value == current_room){
     				$('#rooms').append('<div>' + value + '</div>');
@@ -51,18 +53,20 @@
     		});
     	});
 
+      // Switch room handler
       function switchRoom(room) {
+        // update server
         socket.emit('switchRoom', room);
       };
 
 
       // on page load
       $(function () {
-
         // when the client clicks SEND
         $('#datasend').click( function() {
           var message = $('#data').val();
           $('#data').val('');
+
           // tell server to execute 'sendchat' and send along one parameter
           socket.emit('sendchat', message);
         });
