@@ -15,6 +15,8 @@ let userObj = {
   usersOnline: []
 };
 
+let rooms = ['room1', 'room2', 'room3'];
+
 const members = new Map()
 let chatHistory = [];
 
@@ -76,18 +78,27 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket) {
 
-  // when the username is input
-  socket.on('username', function(data) {
-    // this is going to cause a problem
-    _.merge(userObj, data);
+  // when a new user logs into a chatroom
+  socket.on('addUser', function(username) {
+    // store userName in the socket
+    socket.username = username;
 
-    // userObj.userName = data.userName;
+    // store the room name in the socket
+    socket.room = 'room1';
 
-    // push the next user into the users storage
-    // userObj.usersOnline.push(data.userName);
+    // add user to list of current users
+    userObj.username = username;
 
-    // send it back to the frontend
-    socket.emit('username', userObj);
+    // send the user to room 1
+    socket.join('room1');
+
+    // let the client know you have connected
+    socket.emit('updatechat', 'SERVER', 'you have connected to room1');
+
+    // let room 1 know a new user has connected
+    socket.broadcast.to('room1').emit('updatechat', 'SERVER', username + ' has connected to this room');
+
+    socket.emit('updaterooms', rooms, 'room1');
   });
 
   // listen for chat messages
