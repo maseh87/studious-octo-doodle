@@ -20,57 +20,6 @@ let rooms = ['room1', 'room2', 'room3'];
 const members = new Map()
 let chatHistory = [];
 
-
-function broadcastMessages(msg) {
-  members.forEach(function(member) {
-    // emit a message for each
-  });
-}
-
-function addMessage(msg) {
-  chatHistory = chatHistory.concat(msg);
-}
-
-function getChatHistory() {
-  return chatHistory.slice();
-}
-
-function addUser(user) {
-  members.set(user.id, user);
-}
-
-function removeUser(user) {
-  members.delete(user.id);
-}
-
-function serialize() {
-  return {
-    name,
-    numMembers: members.size
-  }
-}
-
-////////// handler functions //////////
-let joinHandler = function(chatroomName, cb) {
-
-};
-
-let getChatroomsHandler = function() {
-
-};
-
-let leaveHandler = function() {
-
-};
-
-let disconnectHandler = function() {
-
-};
-
-let getOnlineUsers = function() {
-
-};
-
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -79,7 +28,7 @@ app.get('/', function(req, res){
 io.on('connection', function(socket) {
 
   // when a new user logs into a chatroom
-  socket.on('addUser', function(username) {
+  socket.on('adduser', function(username) {
     // store userName in the socket
     socket.username = username;
 
@@ -101,45 +50,35 @@ io.on('connection', function(socket) {
     socket.emit('updaterooms', rooms, 'room1');
   });
 
-  // listen for chat messages
-  socket.on('chat message', function(msgObj) {
-    console.log(msgObj);
-    io.emit('chat message', msgObj);
-  });
+  // when the client emits 'sendchat', this listens and executes
+	socket.on('sendchat', function (data) {
+		// we tell the client to execute 'updatechat' with 2 parameters
+		io.sockets.in(socket.room).emit('updatechat', socket.username, data);
+	});
 
-  // socket.on('', function() {
-  //
-  // });
+	socket.on('switchRoom', function(newroom){
+		socket.leave(socket.room);
+		socket.join(newroom);
+		socket.emit('updatechat', 'SERVER', 'you have connected to '+ newroom);
+		// sent message to OLD room
+		socket.broadcast.to(socket.room).emit('updatechat', 'SERVER', socket.username+' has left this room');
+		// update socket session room title
+		socket.room = newroom;
+		socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username+' has joined this room');
+		socket.emit('updaterooms', rooms, newroom);
+	});
 
-  // Add “{user} is typing” functionality.
 
-
-  // Broadcast a message to connected users when someone connects or disconnects.
-  socket.emit('connected', userObj);
-
-  // user joins
-  socket.on('join', joinHandler);
-
-  // user leaves
-  socket.on('leave', leaveHandler);
-
-  // chatrooms
-  socket.on('chatrooms', getChatroomsHandler);
-
-  // get online users
-  socket.on('onlineUsers', getOnlineUsers)
-
-  // disconnection
-  socket.on('disconnect', function() {
-    console.log('User disconnected: ', socket.id);
-    // disconnectHandler();
-  });
-
-  // Error handling
-  socket.on('error', function(err) {
-    console.log('recieved error from user: ', socket.id);
-    console.log(err);
-  });
+	// when the user disconnects.. perform this
+	socket.on('disconnect', function(){
+		// remove the username from global userObj list
+		delete userObj[socket.username];
+		// update list of users in chat, client-side
+		io.sockets.emit('updateusers', userObj);
+		// echo globally that this client has left
+		socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
+		socket.leave(socket.room);
+	});
 });
 
 http.listen(3000, function(err) {
