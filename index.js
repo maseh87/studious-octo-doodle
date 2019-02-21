@@ -56,9 +56,13 @@ io.on('connection', function(socket) {
 		io.sockets.in(socket.room).emit('updatechat', socket.username, data);
 	});
 
+  // Switching rooms
 	socket.on('switchRoom', function(newroom){
+    // leave the current room
 		socket.leave(socket.room);
+    // join the new room
 		socket.join(newroom);
+    // let the server know to update the chats
 		socket.emit('updatechat', 'SERVER', 'you have connected to '+ newroom);
 		// sent message to OLD room
 		socket.broadcast.to(socket.room).emit('updatechat', 'SERVER', socket.username+' has left this room');
@@ -81,6 +85,7 @@ io.on('connection', function(socket) {
 	});
 });
 
+// Error handling
 http.listen(3000, function(err) {
   if (err) throw err
   console.log('Listening on *:3k');
