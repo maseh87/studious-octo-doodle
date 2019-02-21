@@ -15,7 +15,6 @@
 	      <input type="button" id="datasend" value="send" />
     </div>
 
-
     <!-- Dependencies -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -23,14 +22,14 @@
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
-
-    <!-- move into new file -->
+    <!-- TODO: move into new file -->
     <script>
+      // before page load
       const socket = io();
 
+      // on connection emit to the server that a new user has joined
       socket.on('connect', function(data) {
         socket.emit('adduser', prompt('What is your name?'));
-
       });
 
       // Update chats for the client
@@ -59,7 +58,6 @@
         socket.emit('switchRoom', room);
       };
 
-
       // on page load
       $(function () {
         // when the client clicks SEND
@@ -70,6 +68,7 @@
           // tell server to execute 'sendchat' and send along one parameter
           socket.emit('sendchat', message);
         });
+
         // when the client hits ENTER on their keyboard
         $('#data').keypress(function(e) {
           if(e.which == 13) {
