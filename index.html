@@ -37,6 +37,7 @@
 
       // on connection emit to the server that a new user has joined
       socket.on('connect', function(data) {
+        // emit to server the username
         socket.emit('adduser', prompt('What is your name?'));
       });
 
