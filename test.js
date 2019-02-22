@@ -3,9 +3,29 @@ let expect = require('chai').expect,
         io = require('socket.io-client'),
  socketURL = 'http://0.0.0.0:3000';
 
+let chatUser1 = {name: 'Tom'},
+    chatUser2 = {name: 'Dick'},
+    chatUser3 = {name: 'Harry'};
 
-// it('double done', function(done) {
-  // Calling `done()` twice is an error
-  // setImmediate(done);
-  // setImmediate(done);
-// });
+let options = {
+  transports: ['websocket'],
+  'force new connection': true
+};
+
+describe('Chat Server', function() {
+  it('Should broadcast new user to everyone', function(done) {
+    // connect the first client
+    let client1 = io.connect(socketURL, options);
+
+    client1.on('connect', function(data) {
+      client1.emit('adduser', chatUser1);
+    });
+
+    // connect the second client
+    let client2 = io.connect(socketURL, options);
+
+    client2.on('connect', function(data) {
+      client2.emit('adduser', chatUser2);
+    });
+  });
+});
