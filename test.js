@@ -27,5 +27,22 @@ describe('Chat Server', function() {
     client2.on('connect', function(data) {
       client2.emit('adduser', chatUser2);
     });
+
+    client2.on('adduser', function(usersName) {
+      usersName.should.equal('');
+    });
+
+    let numbers = 0;
+    client1.on('adduser', function(usersName) {
+      number+=1;
+
+      if(numbers === 2) {
+        usersName.should.equal(chatuser2.name + ' has joined');
+      }
+
+      client1.disconnect();
+      done();
+    });
+
   });
 });
